@@ -9,10 +9,10 @@
 #import "LFStreamingBuffer.h"
 #import "NSMutableArray+LFAdd.h"
 
-static const NSUInteger defaultSortBufferMaxCount = 5;///< 排序10个内
-static const NSUInteger defaultUpdateInterval = 1;///< 更新频率为1s
-static const NSUInteger defaultCallBackInterval = 5;///< 5s计时一次
-static const NSUInteger defaultSendBufferMaxCount = 600;///< 最大缓冲区为600
+static const NSUInteger defaultSortBufferMaxCount = 5;///< Sort within 10
+static const NSUInteger defaultUpdateInterval = 1;///< Update frequency is 1s
+static const NSUInteger defaultCallBackInterval = 5;///< 5s timing once
+static const NSUInteger defaultSendBufferMaxCount = 600;///< The maximum buffer is 600
 
 @interface LFStreamingBuffer (){
     dispatch_semaphore_t _lock;
@@ -22,7 +22,7 @@ static const NSUInteger defaultSendBufferMaxCount = 600;///< 最大缓冲区为6
 @property (nonatomic, strong, readwrite) NSMutableArray <LFFrame *> *list;
 @property (nonatomic, strong) NSMutableArray *thresholdList;
 
-/** 处理buffer缓冲区情况 */
+/** Handling buffer buffers */
 @property (nonatomic, assign) NSInteger currentInterval;
 @property (nonatomic, assign) NSInteger callBackInterval;
 @property (nonatomic, assign) NSInteger updateInterval;
@@ -60,12 +60,12 @@ static const NSUInteger defaultSendBufferMaxCount = 600;///< 最大缓冲区为6
     if (self.sortList.count < defaultSortBufferMaxCount) {
         [self.sortList addObject:frame];
     } else {
-        ///< 排序
+        ///< Sort
         [self.sortList addObject:frame];
 		[self.sortList sortUsingFunction:frameDataCompare context:nil];
-        /// 丢帧
+        /// Drop frame
         [self removeExpireFrame];
-        /// 添加至缓冲区
+        /// Add to buffer
         LFFrame *firstFrame = [self.sortList lfPopFirstObject];
 
         if (firstFrame) [self.list addObject:firstFrame];
@@ -89,14 +89,14 @@ static const NSUInteger defaultSendBufferMaxCount = 600;///< 最大缓冲区为6
 - (void)removeExpireFrame {
     if (self.list.count < self.maxCount) return;
 
-    NSArray *pFrames = [self expirePFrames];///< 第一个P到第一个I之间的p帧
+    NSArray *pFrames = [self expirePFrames];///< Frame between first
     self.lastDropFrames += [pFrames count];
     if (pFrames && pFrames.count > 0) {
         [self.list removeObjectsInArray:pFrames];
         return;
     }
     
-    NSArray *iFrames = [self expireIFrames];///<  删除一个I帧（但一个I帧可能对应多个nal）
+    NSArray *iFrames = [self expireIFrames];///<  Delete an Iframe (but an I frame may correspond to multiple nals)
     self.lastDropFrames += [iFrames count];
     if (iFrames && iFrames.count > 0) {
         [self.list removeObjectsInArray:iFrames];
@@ -196,7 +196,7 @@ NSInteger frameDataCompare(id obj1, id obj2, void *context){
 
 #pragma mark -- 采样
 - (void)tick {
-    /** 采样 3个阶段   如果网络都是好或者都是差给回调 */
+    /** Sampling 3 stages   If the network is good or bad, give a callback */
     _currentInterval += self.updateInterval;
 
     dispatch_semaphore_wait(_lock, DISPATCH_TIME_FOREVER);
