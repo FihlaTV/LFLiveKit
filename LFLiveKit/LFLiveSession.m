@@ -28,44 +28,36 @@
 @property (nonatomic, strong) LFAudioCapture *audioCaptureSource;
 /// Video capture
 @property (nonatomic, strong) LFVideoCapture *videoCaptureSource;
-/// 音频编码
 @property (nonatomic, strong) id<LFAudioEncoding> audioEncoder;
-/// 视频编码
 @property (nonatomic, strong) id<LFVideoEncoding> videoEncoder;
-/// 上传
 @property (nonatomic, strong) id<LFStreamSocket> socket;
 
 
 #pragma mark -- 内部标识
-/// 调试信息
+
 @property (nonatomic, strong) LFLiveDebug *debugInfo;
-/// 流信息
 @property (nonatomic, strong) LFLiveStreamInfo *streamInfo;
-/// 是否开始上传
 @property (nonatomic, assign) BOOL uploading;
-/// 当前状态
 @property (nonatomic, assign, readwrite) LFLiveState state;
-/// 当前直播type
 @property (nonatomic, assign, readwrite) LFLiveCaptureTypeMask captureType;
-/// 时间戳锁
 @property (nonatomic, strong) dispatch_semaphore_t lock;
 
 
 @end
 
-/**  时间戳 */
+/** Timestamp */
 #define NOW (CACurrentMediaTime()*1000)
 #define SYSTEM_VERSION_LESS_THAN(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 
 @interface LFLiveSession ()
 
-/// 上传相对时间戳
+/// Upload relative timestamp
 @property (nonatomic, assign) uint64_t relativeTimestamps;
-/// 音视频是否对齐
+/// Whether the audio and video are aligned
 @property (nonatomic, assign) BOOL AVAlignment;
-/// 当前是否采集到了音频
+/// Whether audio is currently collected
 @property (nonatomic, assign) BOOL hasCaptureAudio;
-/// 当前是否采集到了关键帧
+/// Whether key frames are currently captured
 @property (nonatomic, assign) BOOL hasKeyFrameVideo;
 
 @end
@@ -141,7 +133,7 @@
 
 #pragma mark -- EncoderDelegate
 - (void)audioEncoder:(nullable id<LFAudioEncoding>)encoder audioFrame:(nullable LFAudioFrame *)frame {
-    //<上传  时间戳对齐
+    //< Upload timestamp alignment
     if (self.uploading){
         self.hasCaptureAudio = YES;
         if(self.AVAlignment) [self pushSendBuffer:frame];
@@ -149,7 +141,7 @@
 }
 
 - (void)videoEncoder:(nullable id<LFVideoEncoding>)encoder videoFrame:(nullable LFVideoFrame *)frame {
-    //<上传 时间戳对齐
+    //< Upload timestamp alignment
     if (self.uploading){
         if(frame.isKeyFrame && self.hasCaptureAudio) self.hasKeyFrameVideo = YES;
         if(self.AVAlignment) [self pushSendBuffer:frame];
