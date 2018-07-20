@@ -14,13 +14,13 @@
 
 
 @protocol LFAudioEncoding;
-/// 编码器编码后回调
+/// Encoder coded callback
 @protocol LFAudioEncodingDelegate <NSObject>
 @required
 - (void)audioEncoder:(nullable id<LFAudioEncoding>)encoder audioFrame:(nullable LFAudioFrame *)frame;
 @end
 
-/// 编码器抽象的接口
+/// Encoder abstract interface
 @protocol LFAudioEncoding <NSObject>
 @required
 - (void)encodeAudioData:(nullable NSData*)audioData timeStamp:(uint64_t)timeStamp;

@@ -11,10 +11,12 @@
 #import "LFLiveAudioConfiguration.h"
 
 #pragma mark -- AudioCaptureNotification
+
 /** compoentFialed will post the notification */
 extern NSString *_Nullable const LFAudioComponentFailedToCreateNotification;
 
 @class LFAudioCapture;
+
 /** LFAudioCapture callback audioData */
 @protocol LFAudioCaptureDelegate <NSObject>
 - (void)captureOutput:(nullable LFAudioCapture *)capture audioData:(nullable NSData*)audioData;
