@@ -20,13 +20,13 @@
 
 @interface LFLiveSession ()<LFAudioCaptureDelegate, LFVideoCaptureDelegate, LFAudioEncodingDelegate, LFVideoEncodingDelegate, LFStreamSocketDelegate>
 
-/// 音频配置
+/// Audio configuration
 @property (nonatomic, strong) LFLiveAudioConfiguration *audioConfiguration;
-/// 视频配置
+/// Video configuration
 @property (nonatomic, strong) LFLiveVideoConfiguration *videoConfiguration;
-/// 声音采集
+/// Audio capture
 @property (nonatomic, strong) LFAudioCapture *audioCaptureSource;
-/// 视频采集
+/// Video capture
 @property (nonatomic, strong) LFVideoCapture *videoCaptureSource;
 /// 音频编码
 @property (nonatomic, strong) id<LFAudioEncoding> audioEncoder;
