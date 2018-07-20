@@ -60,8 +60,8 @@
         return;
     }
     
-    if(leftLength + audioData.length >= self.configuration.bufferLength){
-        ///<  发送
+    if(leftLength + audioData.length >= self.configuration.bufferLength) {
+        ///< send
         NSInteger totalSize = leftLength + audioData.length;
         NSInteger encodeCount = totalSize/self.configuration.bufferLength;
         char *totalBuf = malloc(totalSize);
@@ -82,8 +82,8 @@
         
         free(totalBuf);
         
-    }else{
-        ///< 积累
+    } else {
+        ///< accumulation
         memcpy(leftBuf+leftLength, audioData.bytes, audioData.length);
         leftLength = leftLength + audioData.length;
     }
@@ -101,7 +101,7 @@
     buffers.mBuffers[0] = inBuffer;
     
     
-    // 初始化一个输出缓冲列表
+    // Initialize an output buffer list
     AudioBufferList outBufferList;
     outBufferList.mNumberBuffers = 1;
     outBufferList.mBuffers[0].mNumberChannels = inBuffer.mNumberChannels;
@@ -137,7 +137,7 @@
 }
 
 #pragma mark -- CustomMethod
-- (BOOL)createAudioConvert { //根据输入样本初始化一个编码转换器
+- (BOOL)createAudioConvert { // Initialize a transcoder based on the input samples
     if (m_converter != nil) {
         return TRUE;
     }
@@ -152,12 +152,12 @@
     inputFormat.mBytesPerFrame = inputFormat.mBitsPerChannel / 8 * inputFormat.mChannelsPerFrame;
     inputFormat.mBytesPerPacket = inputFormat.mBytesPerFrame * inputFormat.mFramesPerPacket;
     
-    AudioStreamBasicDescription outputFormat; // 这里开始是输出音频格式
+    AudioStreamBasicDescription outputFormat; // Here is the output audio format
     memset(&outputFormat, 0, sizeof(outputFormat));
-    outputFormat.mSampleRate = inputFormat.mSampleRate;       // 采样率保持一致
-    outputFormat.mFormatID = kAudioFormatMPEG4AAC;            // AAC编码 kAudioFormatMPEG4AAC kAudioFormatMPEG4AAC_HE_V2
+    outputFormat.mSampleRate = inputFormat.mSampleRate;       // Sampling rate is consistent
+    outputFormat.mFormatID = kAudioFormatMPEG4AAC;            // AAC coding kAudioFormatMPEG4AAC kAudioFormatMPEG4AAC_HE_V2
     outputFormat.mChannelsPerFrame = (UInt32)_configuration.numberOfChannels;;
-    outputFormat.mFramesPerPacket = 1024;                     // AAC一帧是1024个字节
+    outputFormat.mFramesPerPacket = 1024;                     // AAC一 Frame is 1024 Byte
     
     const OSType subtype = kAudioFormatMPEG4AAC;
     AudioClassDescription requestedCodecs[2] = {
