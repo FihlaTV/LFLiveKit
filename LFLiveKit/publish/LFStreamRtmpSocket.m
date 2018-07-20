@@ -14,7 +14,7 @@
 #import "rtmp.h"
 #endif
 
-static const NSInteger RetryTimesBreaken = 5;  ///<  重连1分钟  3秒一次 一共20次
+static const NSInteger RetryTimesBreaken = 5;  ///<  Reconnect 1 minute 3 seconds once 20 times in total
 static const NSInteger RetryTimesMargin = 3;
 
 
@@ -55,7 +55,7 @@ SAVC(mp4a);
 @property (nonatomic, strong) LFStreamingBuffer *buffer;
 @property (nonatomic, strong) LFLiveDebug *debugInfo;
 @property (nonatomic, strong) dispatch_queue_t rtmpSendQueue;
-//错误信息
+// Error message
 @property (nonatomic, assign) RTMPError error;
 @property (nonatomic, assign) NSInteger retryTimes4netWorkBreaken;
 @property (nonatomic, assign) NSInteger reconnectInterval;
@@ -168,7 +168,7 @@ SAVC(mp4a);
                 return;
             }
 
-            // 调用发送接口
+            // Calling the send interface
             LFFrame *frame = [_self.buffer popFirstObject];
             if ([frame isKindOfClass:[LFVideoFrame class]]) {
                 if (!_self.sendVideoHead) {
@@ -194,7 +194,7 @@ SAVC(mp4a);
                 }
             }
 
-            //debug更新
+            //debug update
             _self.debugInfo.totalFrame++;
             _self.debugInfo.dropFrame += _self.buffer.lastDropFrames;
             _self.buffer.lastDropFrames = 0;
@@ -223,9 +223,9 @@ SAVC(mp4a);
                 _self.debugInfo.timeStamp = CACurrentMediaTime() * 1000;
             }
             
-            //修改发送状态
+            // Modify the sending status
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                //< 这里只为了不循环调用sendFrame方法 调用栈是保证先出栈再进栈
+                //< This is just to not call the sendFrame method without looping. The call stack is guaranteed to be popped first and then pushed into the stack.
                 _self.isSending = NO;
             });
             
@@ -246,12 +246,12 @@ SAVC(mp4a);
 }
 
 - (NSInteger)RTMP264_Connect:(char *)push_url {
-    //由于摄像头的timestamp是一直在累加，需要每次得到相对时间戳
-    //分配与初始化
+    //Since the camera's timestamp is always accumulating, you need to get a relative timestamp each time.
+    //Allocation and initialization
     _rtmp = PILI_RTMP_Alloc();
     PILI_RTMP_Init(_rtmp);
 
-    //设置URL
+    //Set the URL
     if (PILI_RTMP_SetupURL(_rtmp, push_url, &_error) == FALSE) {
         //log(LOG_ERR, "RTMP_SetupURL() failed!");
         goto Failed;
@@ -263,15 +263,15 @@ SAVC(mp4a);
     _rtmp->m_msgCounter = 1;
     _rtmp->Link.timeout = RTMP_RECEIVE_TIMEOUT;
     
-    //设置可写，即发布流，这个函数必须在连接前使用，否则无效
+    //Set writable, that is, the release stream, this function must be used before the connection, otherwise invalid
     PILI_RTMP_EnableWrite(_rtmp);
 
-    //连接服务器
+    //Connect to the server
     if (PILI_RTMP_Connect(_rtmp, NULL, &_error) == FALSE) {
         goto Failed;
     }
 
-    //连接流
+    //Connection flow
     if (PILI_RTMP_ConnectStream(_rtmp, 0, &_error) == FALSE) {
         goto Failed;
     }
@@ -455,21 +455,21 @@ Failed:
 
 - (void)sendAudioHeader:(LFAudioFrame *)audioFrame {
 
-    NSInteger rtmpLength = audioFrame.audioInfo.length + 2;     /*spec data长度,一般是2*/
+    NSInteger rtmpLength = audioFrame.audioInfo.length + 2;     /*spec data length, generally 2*/
     unsigned char *body = (unsigned char *)malloc(rtmpLength);
     memset(body, 0, rtmpLength);
 
     /*AF 00 + AAC RAW data*/
     body[0] = 0xAF;
     body[1] = 0x00;
-    memcpy(&body[2], audioFrame.audioInfo.bytes, audioFrame.audioInfo.length);          /*spec_buf是AAC sequence header数据*/
+    memcpy(&body[2], audioFrame.audioInfo.bytes, audioFrame.audioInfo.length);          /*spec_buf AAC sequence header */
     [self sendPacket:RTMP_PACKET_TYPE_AUDIO data:body size:rtmpLength nTimestamp:0];
     free(body);
 }
 
 - (void)sendAudio:(LFFrame *)frame {
 
-    NSInteger rtmpLength = frame.data.length + 2;    /*spec data长度,一般是2*/
+    NSInteger rtmpLength = frame.data.length + 2;    /*spec data length, generally 2*/
     unsigned char *body = (unsigned char *)malloc(rtmpLength);
     memset(body, 0, rtmpLength);
 
@@ -481,7 +481,7 @@ Failed:
     free(body);
 }
 
-// 断线重连
+// Broken line reconnection
 - (void)reconnect {
     dispatch_async(self.rtmpSendQueue, ^{
         if (self.retryTimes4netWorkBreaken++ < self.reconnectCount && !self.isReconnecting) {
