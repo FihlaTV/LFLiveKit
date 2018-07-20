@@ -11,13 +11,13 @@
 #import "LFLiveVideoConfiguration.h"
 
 @protocol LFVideoEncoding;
-/// 编码器编码后回调
+/// Encoder coded callback
 @protocol LFVideoEncodingDelegate <NSObject>
 @required
 - (void)videoEncoder:(nullable id<LFVideoEncoding>)encoder videoFrame:(nullable LFVideoFrame *)frame;
 @end
 
-/// 编码器抽象的接口
+/// Encoder abstract interface
 @protocol LFVideoEncoding <NSObject>
 @required
 - (void)encodeVideoData:(nullable CVPixelBufferRef)pixelBuffer timeStamp:(uint64_t)timeStamp;
