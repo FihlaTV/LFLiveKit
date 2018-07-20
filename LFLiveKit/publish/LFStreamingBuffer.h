@@ -13,16 +13,16 @@
 
 /** current buffer status */
 typedef NS_ENUM (NSUInteger, LFLiveBuffferState) {
-    LFLiveBuffferUnknown = 0,      //< 未知
-    LFLiveBuffferIncrease = 1,    //< 缓冲区状态差应该降低码率
-    LFLiveBuffferDecline = 2      //< 缓冲区状态好应该提升码率
+    LFLiveBuffferUnknown = 0,      //< Unknown
+    LFLiveBuffferIncrease = 1,    //< Buffer state difference should lower the code rate
+    LFLiveBuffferDecline = 2      //< Buffer status should improve the bit rate
 };
 
 @class LFStreamingBuffer;
 /** this two method will control videoBitRate */
 @protocol LFStreamingBufferDelegate <NSObject>
 @optional
-/** 当前buffer变动（增加or减少） 根据buffer中的updateInterval时间回调*/
+/** Current buffer change (increase or decrease) according to the updateInterval time callback in the buffer */
 - (void)streamingBuffer:(nullable LFStreamingBuffer *)buffer bufferState:(LFLiveBuffferState)state;
 @end
 
